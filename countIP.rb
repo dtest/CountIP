@@ -20,7 +20,7 @@ class LogReader
   def parseTopIP
     ips = {} 
     self.readLog
-    @logContents.scan(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/).each do |ip|
+    @logContents.scan(/ \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} /).each do |ip|
       ips[ip] = ips.fetch(ip, 0)+1
     end
     
@@ -30,45 +30,46 @@ class LogReader
     ips.each{ |ip,count| puts "#{ip}: #{count}"}
   end
   
-  def parsePages
-    pages = {}
-    self.readLog
+#  def parsePages
+#    pages = {}
+#    self.readLog
 
-    # exclude list
-    puts "Exclude patterns: (enter one per line...blank line indicates complete list)"
-    excludes = []
-    while true
-      print "pattern> "; STDOUT.flush; pat = gets.chop
-      break if pat.empty?
-      excludes << Regexp.new(pat)
-    end
+#    # exclude list
+#    puts "Exclude patterns: (enter one per line...blank line indicates complete list)"
+#    excludes = []
+#    while true
+#      print "pattern> "; STDOUT.flush; pat = gets.chop
+#      break if pat.empty?
+#      excludes << Regexp.new(pat)
+#    end
 
-    puts excludes
+#    puts excludes
 
-    @logContents.scan(/GET(.*)HTTP/).each do |page|
-      toInclude = 1
-      excludes.each do |pat|
-       if (page =~ pat) 
-	 toInclude = false
-       end
-      end 
-      if (toInclude)
-      	pages[page] = pages.fetch(page, 0)+1
-      end
-    end
+#    @logContents.scan(/GET(.*)HTTP/).each do |page|
+#      toInclude = 1
+#      excludes.each do |pat|
+#       if (page =~ pat) 
+#	 toInclude = false
+#       end
+#      end 
+#      if (toInclude)
+#      	pages[page] = pages.fetch(page, 0)+1
+#      end
+#    end
    
-    pages = self.contentSlice(pages) # sorts and grabs appropriate amount of pages
+#    pages = self.contentSlice(pages) # sorts and grabs appropriate amount of pages
 
-    puts "\nTop Pages Accessed:"
-    pages.each{ |page,count| puts "#{page}: #{count}"}    
-  end
+#    puts "\nTop Pages Accessed:"
+#    pages.each{ |page,count| puts "#{page}: #{count}"}    
+# end
 end
 
-choices = ["parseTopIP", "parsePages"]
+#choices = ["parseTopIP", "parsePages"]
 
-print "Type of Parse? ( "
-choices.each {|method| print "#{method} "} 
-print ") "
-parseMethod = STDIN.gets.chop
+#print "Type of Parse? ( "
+#choices.each {|method| print "#{method} "} 
+#print ") "
+#parseMethod = STDIN.gets.chop
+parseMethod = "parseTopIP"
 
 (LogReader.new).send(parseMethod)
